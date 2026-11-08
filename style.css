@@ -1,0 +1,220 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f4f8;
+    color: #1e293b;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 32px;
+    background: #172538;
+    color: white;
+}
+
+.topbar h1 {
+    margin: 0 0 6px;
+}
+
+.topbar p {
+    margin: 0;
+    color: #bdc9d8;
+}
+
+.status {
+    padding: 8px 12px;
+    border: 1px solid #58718d;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px;
+}
+
+.info-panel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.info-card {
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #1725380c;
+}
+
+.info-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.info-card strong {
+    font-size: 28px;
+}
+
+.factory {
+    padding: 24px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px #1725380c;
+}
+
+.factory-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.factory-heading h2 {
+    margin: 0;
+}
+
+.factory-heading span {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.map-viewport {
+    width: 100%;
+    overflow: auto;
+}
+
+.map {
+    position: relative;
+    width: 1800px;
+    min-width:1800px;
+    height: 1000px;
+    max-width:none;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 2px solid #d5dee8;
+    border-radius: 0px;
+    background-color: #eaf0e8;
+    background-image:
+        linear-gradient(#d9e2d7 1px, transparent 1px),
+        linear-gradient(90deg, #d9e2d7 1px, transparent 1px);
+
+    background-size: 25px 25px;
+}
+
+.origin-mark {
+    position: absolute;
+    left: 900px;
+    top: 500px;
+    width: 0;
+    height: 0;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.origin-mark::before,
+.origin-mark::after {
+    content: "";
+    position: absolute;
+    background-color: #334155;
+    border-radius: 1px;
+}
+
+.origin-mark::before {
+    width: 13px;
+    height: 2px;
+    left: -6px;
+    top: -1px;
+}
+
+.origin-mark::after {
+    width: 2px;
+    height: 13px;
+    left: -1px;
+    top: -6px;
+}
+
+.station {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #64748b;
+    border: 1px solid #334155;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    z-index: 5;
+}
+
+.road-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.road {
+    fill: none;
+    stroke: #aab4bd;
+    width: 25px;
+}
+
+.station-icon {
+    font-size: 23px;
+}
+
+.station strong {
+    font-size: 16px;
+} 
+
+.station-base {
+    left: 1625px;
+    top: 0px;
+    width: 175px;
+    height: 300px;
+}
+
+.station-pickup {
+    left: 250px;
+    top: 187.5px;
+}
+
+.station-delivery {
+    left: 1475px;
+    top: 187.5px;
+}
+.map-label {
+    position: absolute;
+    color: #647568;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.label-top {
+    top: 5%;
+    left: 5%;
+}
+
+.label-bottom {
+    right: 5%;
+    bottom: 5%;
+}
+

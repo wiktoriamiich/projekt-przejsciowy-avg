@@ -1,0 +1,24 @@
+<!-- html_content = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AGV Visualization</title>
+</head>
+<body>
+    <h2>AGV coordinates</h2>
+    <p>Click F12 and open the developer console to see the AGV positions.</p>
+    <script>
+        const ws = new WebSocket('ws://127.0.0.1:8000/ws');
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            console.log("Received data:", data);
+        };
+    </script>
+</body>
+</html>
+"""
+
+@app.get("/")
+async def get_index():
+    return HTMLResponse(html_content) -->
