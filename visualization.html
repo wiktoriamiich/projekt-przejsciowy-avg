@@ -1,24 +1,156 @@
-<!-- html_content = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>AGV Visualization</title>
+    <style>
+        canvas {
+            background-color: #f8f9fa; 
+        }
+    </style>
 </head>
 <body>
-    <h2>AGV coordinates</h2>
-    <p>Click F12 and open the developer console to see the AGV positions.</p>
+    <h2>AGV Simulation Live</h2>
+    <canvas id="agvCanvas" width="600" height="600" style="border:1px solid #000000;"></canvas>
+    <div style = "margin-top: 15px;"></div>
+
+    <select id="agvSelect">
+        <option value="AUTO">Automatyczny</option>
+        <option value="AGV_1">AGV_1</option>
+        <option value="AGV_2">AGV_2</option>
+        <option value="AGV_3">AGV_3</option>
+    </select>
+        
+    <select id ="startNode">
+        <option value = "StacjaA">Stacja A</option>
+        <option value = "StacjaB">Stacja B</option>
+    </select>
+    <select id = "targetNode">
+        <option value = "StacjaA">Stacja A</option>
+        <option value = "StacjaB">Stacja B</option>
+    </select>
+    <button onclick ="sendTask()">Zleć transport</button>
+
+    
     <script>
+        const canvas = document.getElementById('agvCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Konfiguracja przestrzeni (Python operuje na wartościach 0-10, mnożymy je dla widoczności)
+        const SCALE = 40; 
+        const OFFSET_X = 100;
+        const OFFSET_Y = 100;
+
+        const agvs = {};
+
+
+        function drawMap() {
+            // 1. Czyszczenie ekranu przed każdą klatką animacji
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            
+            // 2. Rysowanie tras fabryki (Krawędzi z NetworkX)
+            ctx.beginPath();
+            ctx.moveTo(0 * SCALE + OFFSET_X, 0 * SCALE + OFFSET_Y);   // Start: Stacja A
+            ctx.lineTo(10 * SCALE + OFFSET_X, 0 * SCALE + OFFSET_Y);  // Do: Skrzyżowanie
+            ctx.lineTo(10 * SCALE + OFFSET_X, 10 * SCALE + OFFSET_Y); // Do: Stacja B
+            ctx.strokeStyle = "#cccccc";
+            ctx.lineWidth = 8;
+            ctx.stroke();
+
+            // 3. Rysowanie stacji (Węzłów)
+            const nodes = [
+                {name: "Stacja A", x: 0, y: 0},
+                {name: "Skrzyżowanie", x: 10, y: 0},
+                {name: "Stacja B", x: 10, y: 10}
+            ];
+
+            nodes.forEach(node => {
+                const px = node.x * SCALE + OFFSET_X;
+                const py = node.y * SCALE + OFFSET_Y;
+                
+                // Rysowanie kropki stacji
+                ctx.beginPath();
+                ctx.arc(px, py, 12, 0, 2 * Math.PI);
+                ctx.fillStyle = "#2c3e50";
+                ctx.fill();
+                
+                // Podpisy stacji
+                ctx.fillStyle = "black";
+                ctx.font = "bold 14px Arial";
+                ctx.fillText(node.name, px + 20, py + 5);
+            });
+        }
+
+        function drawAGV(agvID, x, y, status) {
+            const px = x * SCALE + OFFSET_X;
+            const py = y * SCALE + OFFSET_Y;
+            
+            // Rysowanie pomarańczowego wózka (wyśrodkowanego na ścieżce)
+            ctx.fillStyle = (status === "busy") ? "#e67e22" : "#2c3e50";
+            ctx.fillRect(px - 15, py - 15, 30, 30);
+            
+            // Podpis ID wózka
+            ctx.fillStyle = "white";
+            ctx.font = "10px Arial";
+            ctx.fillText("AGV", px - 10, py + 4);
+        }
+
+        function renderAll(){
+            drawMap()
+            for (const agvID in agvs) {
+                const agv = agvs[agvID];
+                drawAGV(agvID, agv.x, agv.y, agv.status);
+            }
+        }
+
+        drawMap();
+
+        // Podłączenie do serwera FastAPI
         const ws = new WebSocket('ws://127.0.0.1:8000/ws');
+    
         ws.onmessage = function(event) {
             const data = JSON.parse(event.data);
-            console.log("Received data:", data);
+            
+            // Jeśli pakiet od serwera zawiera współrzędne wózka, przerysuj klatkę
+            if (data.Coordinates) {
+                agvs[data.AGV] = {
+                    x: data.Coordinates[0],
+                    y: data.Coordinates[1],
+                    status: data.Status || "idle"
+                };
+                renderAll();
+
+                agvs[data.AGV]={
+                    x: data.Coordinates[0],
+                    y: data.Coordinates[1],
+                    status: data.Status
+                }
+                drawMap();
+                for (const agvID in agvs){
+                    const agv = agvs[agvID];
+                    drawAGV(agvID, agv.x, agv.y, agv.status);
+                }
+            }
         };
+        function sendTask(){
+        //pobranie wybranych wartosci z obu list <select> po ich ID
+        const start = document.getElementById("startNode").value;
+        const target = document.getElementById("targetNode").value;
+        const selectedAGV = document.getElementById("agvSelect").value
+
+        //zabezpieczenie przed wyslaniem zadania z tego samego punktu start i target
+        if(start === target){
+            alert("Wybierz różne stacje startową i doelową");
+            return
+        }
+        //wyslanie pakietu JSON przez otwarte polaczenie WebSocket 
+        ws.send(JSON.stringify({
+        action: "add_task",
+        agv: selectedAGV,
+        startNode: start,
+        targetNode: target
+        }));
+        }
     </script>
 </body>
 </html>
-"""
-
-@app.get("/")
-async def get_index():
-    return HTMLResponse(html_content) -->

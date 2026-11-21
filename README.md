@@ -1,2 +1,2 @@
-# AGV_simulation
-# projekt-przejsciowy-avg
+1. Działanie algorytmu przejeżdzania pojazdów AGV (bez algorytmu kolizji)
+2. Dodanie zlecenia z poziomu przeglądarki 

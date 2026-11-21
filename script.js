@@ -1,18 +1,21 @@
+function sendTask(){
+    //pobranie wybranych wartosci z obu list <select> po ich ID
+    const start = document.getElementById("startNode").value;
+    const target = document.getElementById("targetNode").value;
+    const selectedAGV = document.getElementById("agvSelect").value
 
-console.log("AGV Symulator został uruchomiony!");
-console.log("Mapa fabryki jest gotowa do dalszej rozbudowy.");
+    //zabezpieczenie przed wyslaniem zadania z tego samego punktu start i target
+    if(start === target){
+        alert("Wybierz różne stacje startową i doelową");
+        return
+    }
+    //wyslanie pakietu JSON przez otwarte polaczenie WebSocket 
+    ws.send(JSON.stringify({
+    action: "add_task",
+    agv: selectedAGV,
+    startNode: start,
+    targetNode: target
+    }));
+}
 
 
-const route = [
-    { id: "S1", x: 11, y: 55 },
-    { id: "B",  x: 25, y: 55 },
-    { id: "C",  x: 75, y: 55 },
-    { id: "S2", x: 89, y: 55 }
-];
-
-console.log("AGV Symulator uruchomiony!");
-console.log("Punkty trasy:");
-
-route.forEach(function(point) {
-    console.log(point.id, "x:", point.x, "y:", point.y);
-});
